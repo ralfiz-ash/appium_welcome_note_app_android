@@ -26,6 +26,6 @@ public class HomeTest extends BaseTest {
         Assert.assertTrue(mainPage.isWelcomeNoteDisplayed(),"Welcome note is not displayed");
         Thread.sleep(2000);
         mainPage.clickClearButton();
-        logInfo("Test verified and completed successfully");
+        logInfo("Test verified and completed successfully.");
     }
 }
