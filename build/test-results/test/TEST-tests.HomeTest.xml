@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tests.HomeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-12-17T09:24:16.663Z" hostname="Ashiqs-MBP" time="9.146">
+  <properties/>
+  <testcase name="testButtonsVisibility" classname="tests.HomeTest" time="9.146"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

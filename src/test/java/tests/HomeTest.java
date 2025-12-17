@@ -5,7 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.MainPage;
 
-public class ButtonTest extends BaseTest {
+public class HomeTest extends BaseTest {
 
     @Test(priority = 1)
     public void testButtonsVisibility() {

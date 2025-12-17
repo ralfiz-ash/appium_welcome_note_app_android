@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tests.ButtonTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-12-16T11:56:44.547Z" hostname="Ashiqs-MBP" time="4.043">
-  <properties/>
-  <testcase name="testButtonClick" classname="tests.ButtonTest" time="4.043"/>
-  <system-out><![CDATA[Text entered
-Verifying the welcome note is displayed or not..
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
