@@ -42,6 +42,17 @@ jobs:
         env:
           CI: true
 
+      - name: Wait for Appium & Check APK
+        run: |
+          npx wait-on tcp:4723 --timeout 30000
+          echo "Appium is up!"
+          ls -la
+          if [ ! -f "app-debug.apk" ]; then
+            echo "::error::app-debug.apk NOT FOUND in $(pwd)"
+            exit 1
+          fi
+
+
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0660", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
