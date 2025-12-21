@@ -1,4 +1,4 @@
-name: Appium Android CI
+name: Android CI (Appium Tests)
 
 on:
   push:
@@ -41,6 +41,12 @@ jobs:
           appium &
         env:
           CI: true
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0660", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Run Appium Tests
         uses: reactivecircus/android-emulator-runner@v2
