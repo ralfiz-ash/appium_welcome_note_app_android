@@ -7,11 +7,10 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build_and_test:
+  appium-tests:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -21,36 +20,54 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Make Gradle executable
+      - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Build APK
-        run: ./gradlew clean assembleDebug
+      - name: Build Test Project (no Android APK build)
+        run: ./gradlew clean build
 
-      - name: Install Node & Appium
+      - name: Verify APK exists
+        run: |
+          echo "Checking APK..."
+          ls -la src/apk/
+          if [ ! -f "src/apk/app-debug.apk" ]; then
+            echo "::error::APK NOT FOUND at src/apk/app-debug.apk"
+            exit 1
+          fi
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Appium & Drivers
         run: |
           npm install -g appium
           appium driver install uiautomator2
 
-      # RUN ANDROID EMULATOR + APPIUM + TESTS
-      - name: Run Appium Tests on Android Emulator
+      - name: Start Appium Server
+        run: |
+          appium --log appium.log &
+          sleep 5
+        env:
+          CI: true
+
+      - name: Run Appium Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
           profile: pixel
-          force-avd-creation: false
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio
+          emulator-options: "-no-snapshot-save -no-window -noaudio -gpu swiftshader_indirect"
           script: |
             echo "Waiting for emulator..."
             adb wait-for-device
             adb devices
 
-            echo "Starting Appium server..."
-            appium --allow-insecure=uiautomator2:chromedriver_autodownload --log appium.log &
-            sleep 8
+            echo "Installing APK..."
+            adb install -r src/apk/app-debug.apk
 
             echo "Running tests..."
             ./gradlew test --info
@@ -63,4 +80,3 @@ jobs:
           path: |
             **/build/reports/tests/test/
             appium.log
-            app/build/outputs/apk/debug/app-debug.apk
