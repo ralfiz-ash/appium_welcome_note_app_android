@@ -17,7 +17,30 @@ public class BaseTest {
     protected AppiumDriver driver;
 
     @BeforeMethod
-    public void setUp() throws MalformedURLException {
+    public void setUp() throws Exception {
+
+        File app = new File("app-debug.apk");
+        if (!app.exists()) {
+            throw new RuntimeException("APK NOT FOUND: " + app.getAbsolutePath());
+        }
+
+        UiAutomator2Options options = new UiAutomator2Options()
+                .setPlatformName("Android")
+                .setAutomationName("UiAutomator2")
+                .setDeviceName("Android Emulator")   // Required for emulator
+                .setApp(app.getAbsolutePath())
+                .setAppPackage("com.example.welcomenote")
+                .setAppActivity(".MainActivity")
+                .setNoReset(false)
+                .setNewCommandTimeout(Duration.ofSeconds(300));
+
+        driver = new AndroidDriver(
+                URI.create("http://127.0.0.1:4723").toURL(),
+                options
+        );
+    }
+
+    /*public void setUp() throws MalformedURLException {
         System.out.println("DEBUG: setUp() called");
         String userDir = System.getProperty("user.dir");
         System.out.println("DEBUG: user.dir = " + userDir);
@@ -61,7 +84,7 @@ public class BaseTest {
             throw e; // rethrow because test cannot continue without driver
         }
 
-    }
+    }*/
 
     @AfterMethod
     public void tearDown() {
