@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "com.example.welcomenote.test"
+group = "com.example.appiumpoc.test"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -21,6 +21,8 @@ dependencies {
 }
 
 tasks.test {
-    useTestNG()
+    useTestNG() {
+        suites("testng.xml")
+    }
     systemProperties = System.getProperties().mapKeys { it.key.toString() }.mapValues { it.value.toString() }
 }

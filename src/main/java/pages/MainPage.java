@@ -11,16 +11,16 @@ public class MainPage {
 
     private AppiumDriver driver;
 
-    @AndroidFindBy(id = "com.example.welcomenote:id/etUserName")
+    @AndroidFindBy(id = "com.example.appiumpoc:id/etUserName")
     private WebElement etUserName;
 
-    @AndroidFindBy(id = "com.example.welcomenote:id/buttonContinue")
+    @AndroidFindBy(id = "com.example.appiumpoc:id/buttonContinue")
     private WebElement buttonContinue;
 
-    @AndroidFindBy(id = "com.example.welcomenote:id/buttonClear")
+    @AndroidFindBy(id = "com.example.appiumpoc:id/buttonClear")
     private WebElement buttonClear;
 
-    @AndroidFindBy(id = "com.example.welcomenote:id/labelWelcomeNote")
+    @AndroidFindBy(id = "com.example.appiumpoc:id/labelWelcomeNote")
     private WebElement labelWelcomeNote;
 
     public MainPage(AppiumDriver driver) {
@@ -39,6 +39,7 @@ public class MainPage {
     public void enterUserName(String userName) {
         etUserName.sendKeys(userName);
     }
+
     public void clickContinueButton() {
         buttonContinue.click();
     }
@@ -47,6 +48,7 @@ public class MainPage {
         return labelWelcomeNote.isDisplayed();
 
     }
+
     public void clickClearButton() {
         buttonClear.click();
     }
