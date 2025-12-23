@@ -44,7 +44,7 @@ public class BaseTest {
                 .setAutomationName("UiAutomator2")
                 .setDeviceName("emulator-5554")
                 .setApp(app.getAbsolutePath())
-                .setAppPackage("com.example.appiumpoc")
+                .setAppPackage("com.example.welcomenote")
                 .setAppActivity(".MainActivity")
                 .setNoReset(false)
                 .setNewCommandTimeout(Duration.ofSeconds(300));

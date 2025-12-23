@@ -10,9 +10,10 @@ public class HomeTest extends BaseTest {
     @Test(priority = 1)
     public void testButtonsVisibility() {
         MainPage mainPage = new MainPage(driver);
-        
+        logInfo("Test begins..");
         Assert.assertTrue(mainPage.isContinueButtonDisplayed(), "Continue button should be visible");
         Assert.assertTrue(mainPage.isClearButtonDisplayed(), "Clear button should be visible");
+        logInfo("Test - Button visibility completed");
     }
 
     @Test(priority = 2, description = "Test click functionality and app functioning")

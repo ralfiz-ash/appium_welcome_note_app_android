@@ -11,16 +11,16 @@ public class MainPage {
 
     private AppiumDriver driver;
 
-    @AndroidFindBy(id = "com.example.appiumpoc:id/etUserName")
+    @AndroidFindBy(id = "com.example.welcomenote:id/etUserName")
     private WebElement etUserName;
 
-    @AndroidFindBy(id = "com.example.appiumpoc:id/buttonContinue")
+    @AndroidFindBy(id = "com.example.welcomenote:id/buttonContinue")
     private WebElement buttonContinue;
 
-    @AndroidFindBy(id = "com.example.appiumpoc:id/buttonClear")
+    @AndroidFindBy(id = "com.example.welcomenote:id/buttonClear")
     private WebElement buttonClear;
 
-    @AndroidFindBy(id = "com.example.appiumpoc:id/labelWelcomeNote")
+    @AndroidFindBy(id = "com.example.welcomenote:id/labelWelcomeNote")
     private WebElement labelWelcomeNote;
 
     public MainPage(AppiumDriver driver) {
