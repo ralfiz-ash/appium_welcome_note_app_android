@@ -22,32 +22,32 @@ public class BaseTest {
         String userDir = System.getProperty("user.dir");
         System.out.println("DEBUG: user.dir = " + userDir);
 
-        // Check for APK in standard build output first
+        // Check for APK in multiple locations
         File app = new File(userDir, "app/build/outputs/apk/debug/app-debug.apk");
         if (!app.exists()) {
-            // Check in src/apk/ (common manual storage)
             app = new File(userDir, "src/apk/app-debug.apk");
         }
         if (!app.exists()) {
-            // Fallback to root directory
             app = new File(userDir, "app-debug.apk");
-        }
-        System.out.println("DEBUG: App path = " + app.getAbsolutePath());
-
-        if (!app.exists()) {
-            throw new RuntimeException(
-                    "APK file missing! Please ensure app-debug.apk is in 'app/build/outputs/apk/debug/', 'src/apk/', or project root.");
         }
 
         UiAutomator2Options options = new UiAutomator2Options()
                 .setPlatformName("Android")
                 .setAutomationName("UiAutomator2")
                 .setDeviceName("emulator-5554")
-                .setApp(app.getAbsolutePath())
                 .setAppPackage("com.example.welcomenote")
                 .setAppActivity(".MainActivity")
                 .setNoReset(false)
                 .setNewCommandTimeout(Duration.ofSeconds(300));
+
+        // Only set app path if APK file exists, otherwise assume app is pre-installed
+        if (app.exists()) {
+            System.out.println("DEBUG: Found APK at " + app.getAbsolutePath() + ". Will install if needed.");
+            options.setApp(app.getAbsolutePath());
+        } else {
+            System.out.println(
+                    "DEBUG: APK file not found. Will attempt to launch pre-installed app: com.example.welcomenote");
+        }
 
         try {
             driver = new AndroidDriver(
