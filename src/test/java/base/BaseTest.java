@@ -9,8 +9,10 @@ import org.testng.annotations.BeforeMethod;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BaseTest {
 
@@ -18,51 +20,65 @@ public class BaseTest {
 
     @BeforeMethod
     public void setUp() throws MalformedURLException {
-        System.out.println("DEBUG: setUp() called");
-        String userDir = System.getProperty("user.dir");
-        System.out.println("DEBUG: user.dir = " + userDir);
+        System.out.println("DEBUG: setUp() called for Sauce Labs");
 
-        // Check for APK in multiple locations
-        File app = new File(userDir, "app/build/outputs/apk/debug/app-debug.apk");
-        if (!app.exists()) {
-            app = new File(userDir, "src/apk/app-debug.apk");
-        }
-        if (!app.exists()) {
-            app = new File(userDir, "app-debug.apk");
-        }
+        // ------------------ SAUCE LABS CONFIGURATION ------------------
+        String username = System.getenv("SAUCE_USERNAME"); // Set these in your environment
+        String accessKey = System.getenv("SAUCE_ACCESS_KEY");
+        String sauceUrl = "@ondemand.us-west-1.saucelabs.com:443/wd/hub";
 
-        UiAutomator2Options options = new UiAutomator2Options()
-                .setPlatformName("Android")
-                .setAutomationName("UiAutomator2")
-                .setDeviceName("emulator-5554")
-                .setAppPackage("com.example.welcomenote")
-                .setAppActivity(".MainActivity")
-                .setNoReset(false)
-                .setNewCommandTimeout(Duration.ofSeconds(300));
+        UiAutomator2Options options = new UiAutomator2Options();
+        options.setPlatformName("Android");
+        options.setAutomationName("UiAutomator2");
+        options.setDeviceName("Android GoogleAPI Emulator");
+        options.setPlatformVersion("12.0");
+        options.setApp("storage:filename=app-debug.apk"); // Assuming uploaded to Sauce Storage
+        options.setAppPackage("com.example.welcomenote");
+        options.setAppActivity(".MainActivity");
 
-        // Only set app path if APK file exists, otherwise assume app is pre-installed
-        if (app.exists()) {
-            System.out.println("DEBUG: Found APK at " + app.getAbsolutePath() + ". Will install if needed.");
-            options.setApp(app.getAbsolutePath());
-        } else {
-            System.out.println(
-                    "DEBUG: APK file not found. Will attempt to launch pre-installed app: com.example.welcomenote");
-        }
+        Map<String, Object> sauceOptions = new HashMap<>();
+        sauceOptions.put("username", username != null ? username : "YOUR_SAUCE_USERNAME");
+        sauceOptions.put("accessKey", accessKey != null ? accessKey : "YOUR_SAUCE_ACCESS_KEY");
+        sauceOptions.put("build", "Appium-POC-Build");
+        sauceOptions.put("name", "Welcome Note POC Test");
+        options.setCapability("sauce:options", sauceOptions);
+
+        URL url = new URL(
+                "https://" + sauceOptions.get("username") + ":" + sauceOptions.get("accessKey") + sauceUrl);
 
         try {
-            driver = new AndroidDriver(
-                    URI.create("http://127.0.0.1:4723").toURL(),
-                    options);
-            System.out.println("DEBUG: Driver initialized successfully");
-        } catch (MalformedURLException e) {
-            System.err.println("FATAL ERROR: Invalid Appium server URL!");
-            throw new RuntimeException("Invalid Appium URL", e);
+            driver = new AndroidDriver(url, options);
+            System.out.println("DEBUG: Sauce Labs Driver initialized successfully");
         } catch (Exception e) {
-            System.err.println("ERROR: Failed to initialize driver: " + e.getMessage());
+            System.err.println("ERROR: Failed to initialize Sauce Labs driver: " + e.getMessage());
             e.printStackTrace();
-            throw e; // rethrow because test cannot continue without driver
+            throw e;
         }
 
+        /*
+         * // ------------------ LOCAL CONFIGURATION ------------------
+         * System.out.println("DEBUG: Running locally");
+         * String userDir = System.getProperty("user.dir");
+         * File app = new File(userDir, "src/apk/app-debug.apk");
+         * if (!app.exists()) {
+         * app = new File(userDir, "app-debug.apk");
+         * }
+         * 
+         * UiAutomator2Options localOptions = new UiAutomator2Options()
+         * .setPlatformName("Android")
+         * .setAutomationName("UiAutomator2")
+         * .setDeviceName("emulator-5554")
+         * .setAppPackage("com.example.welcomenote")
+         * .setAppActivity(".MainActivity")
+         * .setNoReset(false);
+         * 
+         * if (app.exists()) {
+         * localOptions.setApp(app.getAbsolutePath());
+         * }
+         * 
+         * driver = new AndroidDriver(new java.net.URL("http://127.0.0.1:4723"),
+         * localOptions);
+         */
     }
 
     @AfterMethod
