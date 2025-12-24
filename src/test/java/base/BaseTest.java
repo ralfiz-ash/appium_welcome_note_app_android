@@ -21,28 +21,46 @@ public class BaseTest {
         System.out.println("DEBUG: setUp() called for Sauce Labs");
 
         // ------------------ SAUCE LABS CONFIGURATION ------------------
-        String username = System.getenv("SAUCE_USERNAME"); // Set these in your environment
-        String accessKey = System.getenv("SAUCE_ACCESS_KEY");
-        String sauceUrl = "@ondemand.us-west-1.saucelabs.com:443/wd/hub";
+        // Support System Properties (-D) first, then Environment Variables, then
+        // placeholders
+        String username = System.getProperty("sauce.username", System.getenv("SAUCE_USERNAME"));
+        String accessKey = System.getProperty("sauce.accessKey", System.getenv("SAUCE_ACCESS_KEY"));
+        String region = System.getProperty("sauce.region", "us-west-1"); // Default to us-west-1
+
+        if (username == null || username.isEmpty())
+            username = "YOUR_SAUCE_USERNAME";
+        if (accessKey == null || accessKey.isEmpty())
+            accessKey = "YOUR_SAUCE_ACCESS_KEY";
+
+        // Construct Sauce URL based on region
+        String sauceUrlBase = region.equalsIgnoreCase("eu") ? "@ondemand.eu-central-1.saucelabs.com:443/wd/hub"
+                : "@ondemand.us-west-1.saucelabs.com:443/wd/hub";
 
         UiAutomator2Options options = new UiAutomator2Options();
         options.setPlatformName("Android");
         options.setAutomationName("UiAutomator2");
         options.setDeviceName("Android GoogleAPI Emulator");
         options.setPlatformVersion("12.0");
-        options.setApp("storage:filename=app-debug.apk"); // Assuming uploaded to Sauce Storage
+
+        // Support app.url from system properties if present
+        String appUrl = System.getProperty("app.url");
+        if (appUrl != null && !appUrl.isEmpty()) {
+            options.setApp(appUrl);
+        } else {
+            options.setApp("storage:filename=app-debug.apk");
+        }
+
         options.setAppPackage("com.example.welcomenote");
         options.setAppActivity(".MainActivity");
 
         Map<String, Object> sauceOptions = new HashMap<>();
-        sauceOptions.put("username", username != null ? username : "YOUR_SAUCE_USERNAME");
-        sauceOptions.put("accessKey", accessKey != null ? accessKey : "YOUR_SAUCE_ACCESS_KEY");
-        sauceOptions.put("build", "Appium-POC-Build");
-        sauceOptions.put("name", "Welcome Note POC Test");
+        sauceOptions.put("username", username);
+        sauceOptions.put("accessKey", accessKey);
+        sauceOptions.put("build", "Appium-Android-Build-" + System.currentTimeMillis());
+        sauceOptions.put("name", "Welcome Note POC Android Test");
         options.setCapability("sauce:options", sauceOptions);
 
-        URL url = new URL(
-                "https://" + sauceOptions.get("username") + ":" + sauceOptions.get("accessKey") + sauceUrl);
+        URL url = new URL("https://" + username + ":" + accessKey + sauceUrlBase);
 
         try {
             driver = new AndroidDriver(url, options);
