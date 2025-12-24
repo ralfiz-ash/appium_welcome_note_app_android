@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+bin/
+out/
+
+# MacOS
+.DS_Store
+
+# Reports
+reports/
+*.html
